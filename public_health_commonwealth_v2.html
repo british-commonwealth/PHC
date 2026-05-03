@@ -1,0 +1,710 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,300&family=DM+Sans:wght@300;400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+--navy:#0a1628;--navy2:#0f2040;--navy3:#1a3060;
+--teal:#0d9488;--teal2:#14b8a6;--teal3:#5eead4;
+--slate:#334155;--slate2:#475569;--slate3:#64748b;--slate4:#94a3b8;--slate5:#cbd5e1;--slate6:#e2e8f0;--slate7:#f1f5f9;--slate8:#f8fafc;
+--red:#dc2626;--amber:#d97706;--green:#059669;--blue:#1d4ed8;
+--text1:var(--navy);--text2:var(--slate);--text3:var(--slate3);--border:var(--slate6);--bg:var(--slate8);--card:#fff;
+--font-ui:'DM Sans',sans-serif;--font-mono:'DM Mono',monospace;--font-display:'Fraunces',serif;
+}
+@media(prefers-color-scheme:dark){
+:root{--navy:#e2f0ff;--navy2:#b8d4f0;--text1:#e2f0ff;--text2:#94a3b8;--text3:#64748b;--border:#1e293b;--bg:#0a0f1a;--card:#0f1a2e;--slate5:#1e293b;--slate6:#1e293b;--slate7:#111827;--slate8:#0a0f1a}
+}
+body{font-family:var(--font-ui);background:var(--bg);color:var(--text1);font-size:14px;line-height:1.5;min-height:100vh}
+.app{display:grid;grid-template-columns:220px 1fr;grid-template-rows:52px 1fr;min-height:100vh}
+.topbar{grid-column:1/-1;display:flex;align-items:center;gap:16px;padding:0 20px;background:var(--navy2);border-bottom:1px solid rgba(255,255,255,.08)}
+.topbar-logo{font-family:var(--font-display);font-size:15px;font-weight:500;color:#e2f0ff;letter-spacing:-.3px;display:flex;align-items:center;gap:8px}
+.topbar-logo span{font-family:var(--font-mono);font-size:10px;background:var(--teal);color:#fff;padding:2px 6px;border-radius:3px;letter-spacing:.5px}
+.topbar-status{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:12px;color:rgba(255,255,255,.5);font-family:var(--font-mono)}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--teal2)}
+.sidebar{background:var(--navy2);border-right:1px solid rgba(255,255,255,.07);padding:16px 0;overflow-y:auto}
+.nav-section{padding:8px 14px 4px;font-size:10px;color:rgba(255,255,255,.35);letter-spacing:1.2px;font-family:var(--font-mono);text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 16px;cursor:pointer;color:rgba(255,255,255,.55);font-size:13px;border-left:2px solid transparent;transition:all .15s}
+.nav-item:hover{color:#e2f0ff;background:rgba(255,255,255,.06)}
+.nav-item.active{color:#e2f0ff;background:rgba(13,148,136,.15);border-left-color:var(--teal2)}
+.nav-icon{font-size:13px;width:16px;text-align:center}
+.main{overflow-y:auto;padding:24px}
+.page{display:none}.page.active{display:block}
+h2{font-family:var(--font-display);font-size:22px;font-weight:300;color:var(--text1);margin-bottom:4px}
+.page-sub{font-size:13px;color:var(--text3);margin-bottom:24px;font-family:var(--font-mono)}
+.section{background:var(--card);border:0.5px solid var(--border);border-radius:10px;padding:20px;margin-bottom:16px}
+.section-title{font-size:11px;text-transform:uppercase;letter-spacing:1.2px;color:var(--text3);font-family:var(--font-mono);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.section-title::after{content:'';flex:1;height:0.5px;background:var(--border)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+label{display:block;font-size:12px;color:var(--text2);margin-bottom:4px;font-family:var(--font-mono)}
+input[type=text],input[type=number],select,textarea{width:100%;background:var(--slate7);border:0.5px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;color:var(--text1);font-family:var(--font-ui);outline:none;transition:border .15s}
+input:focus,select:focus{border-color:var(--teal);background:var(--card)}
+input[type=range]{width:100%;accent-color:var(--teal)}
+.preset-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.preset-btn{padding:8px;border:0.5px solid var(--border);border-radius:6px;background:var(--slate7);cursor:pointer;text-align:center;transition:all .15s;color:var(--text2);font-size:12px}
+.preset-btn:hover,.preset-btn.active{background:rgba(13,148,136,.12);border-color:var(--teal);color:var(--text1)}
+.preset-flag{font-size:18px;display:block;margin-bottom:2px}
+.virus-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.virus-card{border:0.5px solid var(--border);border-radius:8px;padding:12px;cursor:pointer;transition:all .15s;background:var(--card)}
+.virus-card:hover,.virus-card.active{border-color:var(--teal);background:rgba(13,148,136,.06)}
+.virus-name{font-size:13px;font-weight:500;color:var(--text1);margin-bottom:6px}
+.virus-tags{display:flex;gap:4px;flex-wrap:wrap}
+.tag{font-size:10px;padding:2px 6px;border-radius:3px;font-family:var(--font-mono)}
+.tag-r0{background:#dbeafe;color:#1e40af}.tag-cfr{background:#fee2e2;color:#991b1b}.tag-mode{background:#d1fae5;color:#065f46}
+@media(prefers-color-scheme:dark){.tag-r0{background:#1e3a6e;color:#93c5fd}.tag-cfr{background:#450a0a;color:#fca5a5}.tag-mode{background:#064e3b;color:#6ee7b7}}
+.metric-card{background:var(--slate7);border:0.5px solid var(--border);border-radius:8px;padding:14px 16px}
+.metric-label{font-size:11px;color:var(--text3);font-family:var(--font-mono);letter-spacing:.5px;margin-bottom:4px}
+.metric-value{font-size:22px;font-weight:500;color:var(--text1);font-family:var(--font-display)}
+.metric-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.metric-danger .metric-value{color:var(--red)}
+.metric-warn .metric-value{color:var(--amber)}
+.metric-ok .metric-value{color:var(--green)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:6px;font-size:13px;cursor:pointer;border:none;font-family:var(--font-ui);transition:all .15s}
+.btn-primary{background:var(--teal);color:#fff}.btn-primary:hover{background:var(--teal2)}
+.btn-secondary{background:transparent;border:0.5px solid var(--border);color:var(--text1)}.btn-secondary:hover{background:var(--slate7)}
+.progress-wrap{height:4px;background:var(--slate6);border-radius:2px;margin:8px 0;overflow:hidden}
+.progress-bar{height:100%;background:var(--teal);border-radius:2px;transition:width .3s}
+.policy-item{border-left:3px solid var(--teal);padding:10px 14px;margin-bottom:8px;background:rgba(13,148,136,.05);border-radius:0 6px 6px 0}
+.policy-priority{font-size:10px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px}
+.policy-priority.high{color:var(--red)}.policy-priority.medium{color:var(--amber)}.policy-priority.low{color:var(--green)}
+.policy-text{font-size:13px;color:var(--text1)}
+.alert-box{border-radius:8px;padding:12px 16px;margin-bottom:12px;font-size:13px;display:flex;gap:10px}
+.alert-danger{background:rgba(220,38,38,.08);border:0.5px solid rgba(220,38,38,.3);color:var(--text1)}
+.alert-warn{background:rgba(217,119,6,.08);border:0.5px solid rgba(217,119,6,.3);color:var(--text1)}
+.alert-info{background:rgba(13,148,136,.08);border:0.5px solid rgba(13,148,136,.3);color:var(--text1)}
+.chart-wrap{position:relative;width:100%;height:260px}
+.chart-wrap.tall{height:320px}
+.slider-group{margin-bottom:12px}
+.slider-row{display:flex;align-items:center;gap:10px}
+.slider-val{font-family:var(--font-mono);font-size:12px;min-width:50px;text-align:right;color:var(--teal)}
+.range-label{display:flex;justify-content:space-between;font-size:10px;color:var(--text3);font-family:var(--font-mono);margin-top:2px}
+.badge{display:inline-block;padding:2px 8px;border-radius:3px;font-size:11px;font-family:var(--font-mono)}
+.badge-danger{background:rgba(220,38,38,.12);color:var(--red)}
+.badge-warn{background:rgba(217,119,6,.12);color:var(--amber)}
+.badge-ok{background:rgba(5,150,105,.12);color:var(--green)}
+.badge-info{background:rgba(13,148,136,.12);color:var(--teal)}
+.tabs{display:flex;gap:0;border-bottom:0.5px solid var(--border);margin-bottom:20px}
+.tab{padding:8px 16px;cursor:pointer;font-size:13px;color:var(--text3);border-bottom:2px solid transparent;margin-bottom:-0.5px;transition:all .15s}
+.tab.active{color:var(--teal);border-bottom-color:var(--teal)}
+table.data-table{width:100%;border-collapse:collapse;font-size:12px}
+table.data-table th{text-align:left;font-family:var(--font-mono);font-size:10px;letter-spacing:.8px;color:var(--text3);padding:8px 12px;border-bottom:0.5px solid var(--border);text-transform:uppercase}
+table.data-table td{padding:8px 12px;border-bottom:0.5px solid var(--border);color:var(--text1)}
+table.data-table tr:last-child td{border-bottom:none}
+.virus-detail{background:var(--slate7);border-radius:8px;padding:16px;margin-top:12px}
+.detail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:10px}
+.detail-item .d-label{font-size:10px;font-family:var(--font-mono);color:var(--text3);text-transform:uppercase;letter-spacing:.8px}
+.detail-item .d-val{font-size:16px;font-weight:500;color:var(--text1);font-family:var(--font-display)}
+.matching-box{background:rgba(13,148,136,.06);border:0.5px solid var(--teal);border-radius:8px;padding:14px 16px;margin-top:12px}
+.matching-title{font-size:11px;font-family:var(--font-mono);color:var(--teal);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+</style>
+
+<div class="app">
+<div class="topbar">
+  <div class="topbar-logo">&#9632; Public Health Commonwealth <span>v2</span></div>
+  <div class="topbar-status"><div class="status-dot"></div>SEIRD Engine Active</div>
+</div>
+
+<div class="sidebar">
+  <div class="nav-section">Setup</div>
+  <div class="nav-item active" onclick="nav('nation')"><span class="nav-icon">&#9670;</span> Nation Profile</div>
+  <div class="nav-item" onclick="nav('virus')"><span class="nav-icon">&#9632;</span> Pathogen Config</div>
+  <div class="nav-section">Simulation</div>
+  <div class="nav-item" onclick="nav('sim')"><span class="nav-icon">&#9654;</span> Run Simulation</div>
+  <div class="nav-item" onclick="nav('results')"><span class="nav-icon">&#9651;</span> Results Dashboard</div>
+  <div class="nav-section">Response</div>
+  <div class="nav-item" onclick="nav('policy')"><span class="nav-icon">&#9658;</span> Policy Response</div>
+  <div class="nav-item" onclick="nav('scenarios')"><span class="nav-icon">&#9632;</span> Scenario Compare</div>
+</div>
+
+<div class="main">
+
+<!-- NATION PAGE -->
+<div class="page active" id="page-nation">
+  <h2>Nation Profile</h2>
+  <div class="page-sub">Configure demographic and healthcare parameters</div>
+  <div class="section">
+    <div class="section-title">Real-world presets</div>
+    <div class="preset-grid" id="preset-grid"></div>
+  </div>
+  <div class="section">
+    <div class="section-title">Demographic Parameters</div>
+    <div class="grid3">
+      <div><label>Total Population</label><input type="number" id="n-pop" value="67000000"></div>
+      <div><label>Population Density (per km²)</label><input type="number" id="n-density" value="270"></div>
+      <div><label>Average Household Size</label><input type="number" id="n-household" value="2.4" step="0.1"></div>
+    </div>
+    <div style="margin-top:12px">
+      <div class="slider-group">
+        <label>Urban Population: <span id="n-urban-val" style="color:var(--teal);font-family:var(--font-mono)">83%</span></label>
+        <input type="range" min="10" max="99" value="83" id="n-urban" oninput="document.getElementById('n-urban-val').textContent=this.value+'%'">
+      </div>
+      <div class="slider-group">
+        <label>Mobility Level</label>
+        <select id="n-mobility"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option></select>
+      </div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title">Age Distribution (%)</div>
+    <div class="grid3" id="age-inputs"></div>
+  </div>
+  <div class="section">
+    <div class="section-title">Healthcare Capacity</div>
+    <div class="grid3">
+      <div><label>Hospital Beds per 1,000</label><input type="number" id="n-beds" value="2.5" step="0.1"></div>
+      <div><label>ICU Beds per 1,000</label><input type="number" id="n-icu" value="0.35" step="0.01"></div>
+      <div><label>Staff Availability</label><select id="n-staff"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option></select></div>
+    </div>
+    <div style="margin-top:12px" class="slider-group">
+      <label>Economic Resilience: <span id="n-econ-val" style="color:var(--teal);font-family:var(--font-mono)">65</span>/100</label>
+      <input type="range" min="1" max="100" value="65" id="n-econ" oninput="document.getElementById('n-econ-val').textContent=this.value">
+    </div>
+  </div>
+  <button class="btn btn-primary" onclick="nav('virus')">Continue to Pathogen &#8594;</button>
+</div>
+
+<!-- VIRUS PAGE -->
+<div class="page" id="page-virus">
+  <h2>Pathogen Configuration</h2>
+  <div class="page-sub">Select a known pathogen or define a custom agent</div>
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab(this,'virus-library')">Pathogen Library</div>
+    <div class="tab" onclick="switchTab(this,'virus-custom')">Custom Builder</div>
+  </div>
+  <div id="virus-library">
+    <div class="virus-grid" id="virus-grid"></div>
+    <div id="virus-detail-panel"></div>
+  </div>
+  <div id="virus-custom" style="display:none">
+    <div class="section">
+      <div class="section-title">Custom Pathogen Parameters</div>
+      <div class="grid3">
+        <div><label>Name</label><input type="text" id="cv-name" value="Novel Pathogen X"></div>
+        <div><label>R0</label><input type="number" id="cv-r0" value="2.5" step="0.1"></div>
+        <div><label>Incubation Period (days)</label><input type="number" id="cv-incub" value="5" step="0.5"></div>
+        <div><label>Infectious Period (days)</label><input type="number" id="cv-infect" value="7"></div>
+        <div><label>Case Fatality Rate (%)</label><input type="number" id="cv-cfr" value="1.2" step="0.1"></div>
+        <div><label>Hospitalisation Rate (%)</label><input type="number" id="cv-hosp" value="5" step="0.1"></div>
+        <div><label>Asymptomatic (%)</label><input type="number" id="cv-asymp" value="40"></div>
+        <div><label>Immune Escape (0–1)</label><input type="number" id="cv-escape" value="0.2" step="0.05" min="0" max="1"></div>
+        <div><label>Transmission Mode</label><select id="cv-mode"><option value="airborne">Airborne</option><option value="droplet" selected>Droplet</option><option value="contact">Contact</option><option value="vector">Vector</option></select></div>
+      </div>
+      <button class="btn btn-primary" onclick="matchCustomVirus()" style="margin-top:16px">Analyse &amp; Match &#8594;</button>
+      <div id="matching-result"></div>
+    </div>
+  </div>
+  <div style="margin-top:20px"><button class="btn btn-primary" onclick="nav('sim')">Configure Simulation &#8594;</button></div>
+</div>
+
+<!-- SIM PAGE -->
+<div class="page" id="page-sim">
+  <h2>Simulation Engine</h2>
+  <div class="page-sub">SEIRD compartmental model with intervention controls</div>
+  <div class="section">
+    <div class="section-title">Model Configuration</div>
+    <div class="grid3">
+      <div class="slider-group">
+        <label>Duration: <span id="sim-days-val" style="color:var(--teal);font-family:var(--font-mono)">365 days</span></label>
+        <input type="range" min="30" max="730" step="30" value="365" id="sim-days" oninput="document.getElementById('sim-days-val').textContent=this.value+' days'">
+      </div>
+      <div class="slider-group">
+        <label>Intervene at day: <span id="sim-intv-val" style="color:var(--teal);font-family:var(--font-mono)">30</span></label>
+        <input type="range" min="0" max="180" value="30" id="sim-intv" oninput="document.getElementById('sim-intv-val').textContent=this.value">
+      </div>
+      <div class="slider-group">
+        <label>Compliance: <span id="sim-comply-val" style="color:var(--teal);font-family:var(--font-mono)">70%</span></label>
+        <input type="range" min="0" max="100" value="70" id="sim-comply" oninput="document.getElementById('sim-comply-val').textContent=this.value+'%'">
+      </div>
+    </div>
+    <div class="grid3" style="margin-top:12px">
+      <div><label>Vaccine Rollout</label>
+        <select id="sim-vax"><option value="none">No vaccine</option><option value="slow">Slow (day 180+)</option><option value="fast">Fast (day 90+)</option><option value="vfast">Emergency (day 60+)</option></select>
+      </div>
+      <div style="display:flex;align-items:flex-end">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:0"><input type="checkbox" id="sim-mutation"> Mutation events</label>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex;gap:12px;align-items:center">
+    <button class="btn btn-primary" onclick="runSimulation()">&#9654; Run Simulation</button>
+    <div id="sim-progress-wrap" style="flex:1;display:none">
+      <div class="progress-wrap"><div class="progress-bar" id="sim-progress" style="width:0%"></div></div>
+      <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono)" id="sim-progress-label">Initialising...</div>
+    </div>
+  </div>
+</div>
+
+<!-- RESULTS PAGE -->
+<div class="page" id="page-results">
+  <h2>Results Dashboard</h2>
+  <div class="page-sub">Epidemiological projections and outbreak analysis</div>
+  <div id="results-content"><div class="alert-info" style="background:rgba(13,148,136,.08);border:0.5px solid rgba(13,148,136,.3);border-radius:8px;padding:12px 16px;font-size:13px"><span>&#9432;</span> Run a simulation to see results.</div></div>
+</div>
+
+<!-- POLICY PAGE -->
+<div class="page" id="page-policy">
+  <h2>Policy Response System</h2>
+  <div class="page-sub">Evidence-based recommendations tailored to pathogen and national profile</div>
+  <div id="policy-content"><div class="alert-info" style="background:rgba(13,148,136,.08);border:0.5px solid rgba(13,148,136,.3);border-radius:8px;padding:12px 16px;font-size:13px"><span>&#9432;</span> Run a simulation to generate recommendations.</div></div>
+</div>
+
+<!-- SCENARIOS PAGE -->
+<div class="page" id="page-scenarios">
+  <h2>Scenario Comparison</h2>
+  <div class="page-sub">Compare multiple simulation runs side-by-side</div>
+  <div id="scenarios-content"><div class="alert-info" style="background:rgba(13,148,136,.08);border:0.5px solid rgba(13,148,136,.3);border-radius:8px;padding:12px 16px;font-size:13px"><span>&#9432;</span> Save scenarios from the Results page to compare here.</div></div>
+  <div id="scenarios-chart-wrap" style="display:none">
+    <div class="section"><div class="section-title">Infection Curves — All Scenarios</div>
+    <div class="chart-wrap tall"><canvas id="scenarios-chart" role="img" aria-label="Comparison of infection curves">No data.</canvas></div></div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const NATIONS={gb:{name:'United Kingdom',flag:'🇬🇧',pop:67000000,density:270,household:2.4,urban:83,mobility:'medium',beds:2.5,icu:0.35,staff:'medium',econ:72,ages:{u14:17,a1529:19,a3044:20,a4559:19,a6074:14,o75:11}},jp:{name:'Japan',flag:'🇯🇵',pop:125000000,density:334,household:2.2,urban:91,mobility:'high',beds:13.1,icu:0.75,staff:'high',econ:78,ages:{u14:12,a1529:13,a3044:19,a4559:18,a6074:22,o75:16}},in:{name:'India',flag:'🇮🇳',pop:1428000000,density:480,household:4.5,urban:35,mobility:'high',beds:0.5,icu:0.07,staff:'low',econ:38,ages:{u14:26,a1529:20,a3044:22,a4559:18,a6074:9,o75:5}},ng:{name:'Nigeria',flag:'🇳🇬',pop:222000000,density:246,household:5.1,urban:54,mobility:'medium',beds:0.5,icu:0.05,staff:'low',econ:25,ages:{u14:44,a1529:21,a3044:18,a4559:10,a6074:5,o75:2}},us:{name:'United States',flag:'🇺🇸',pop:335000000,density:36,household:2.5,urban:83,mobility:'high',beds:2.8,icu:0.34,staff:'high',econ:80,ages:{u14:18,a1529:19,a3044:21,a4559:19,a6074:14,o75:9}},br:{name:'Brazil',flag:'🇧🇷',pop:215000000,density:25,household:3.1,urban:87,mobility:'medium',beds:2.1,icu:0.20,staff:'medium',econ:45,ages:{u14:21,a1529:22,a3044:22,a4559:19,a6074:11,o75:5}},de:{name:'Germany',flag:'🇩🇪',pop:83000000,density:236,household:1.9,urban:77,mobility:'medium',beds:8.0,icu:0.33,staff:'high',econ:81,ages:{u14:14,a1529:15,a3044:19,a4559:20,a6074:18,o75:14}},za:{name:'South Africa',flag:'🇿🇦',pop:60000000,density:49,household:3.4,urban:68,mobility:'medium',beds:2.3,icu:0.09,staff:'low',econ:35,ages:{u14:29,a1529:22,a3044:22,a4559:16,a6074:7,o75:4}}};
+
+const VIRUSES=[
+  {id:'covid19',name:'COVID-19 (Original)',r0:2.5,incub:5,infect:10,cfr:1.8,hosp:6,mode:'droplet',mut:'medium',escape:0.2,asymp:40,vax:'delay',severity:5,category:'Coronavirus',tags:['R0: 2.5','CFR: 1.8%','Droplet']},
+  {id:'covid_delta',name:'COVID-19 Delta',r0:5.0,incub:4,infect:9,cfr:2.1,hosp:8,mode:'airborne',mut:'medium',escape:0.3,asymp:35,vax:'yes',severity:6,category:'Coronavirus',tags:['R0: 5.0','CFR: 2.1%','Airborne']},
+  {id:'covid_omicron',name:'COVID-19 Omicron',r0:9.5,incub:3,infect:7,cfr:0.3,hosp:2,mode:'airborne',mut:'high',escape:0.85,asymp:60,vax:'yes',severity:4,category:'Coronavirus',tags:['R0: 9.5','CFR: 0.3%','Airborne']},
+  {id:'sars',name:'SARS-CoV-1',r0:3.0,incub:5,infect:14,cfr:9.6,hosp:25,mode:'droplet',mut:'low',escape:0.1,asymp:10,vax:'none',severity:8,category:'Coronavirus',tags:['R0: 3.0','CFR: 9.6%','Droplet']},
+  {id:'mers',name:'MERS-CoV',r0:0.9,incub:5,infect:14,cfr:34.0,hosp:50,mode:'droplet',mut:'low',escape:0.05,asymp:20,vax:'none',severity:9,category:'Coronavirus',tags:['R0: 0.9','CFR: 34%','Droplet']},
+  {id:'flu_seasonal',name:'Seasonal Influenza',r0:1.3,incub:2,infect:5,cfr:0.1,hosp:1.5,mode:'droplet',mut:'high',escape:0.4,asymp:25,vax:'yes',severity:3,category:'Influenza',tags:['R0: 1.3','CFR: 0.1%','Droplet']},
+  {id:'flu_h1n1',name:'H1N1 (2009)',r0:1.5,incub:2,infect:7,cfr:0.02,hosp:3,mode:'droplet',mut:'high',escape:0.3,asymp:30,vax:'delay',severity:3,category:'Influenza',tags:['R0: 1.5','CFR: 0.02%','Droplet']},
+  {id:'flu_h5n1',name:'H5N1 Avian Flu',r0:0.8,incub:3,infect:9,cfr:53.0,hosp:70,mode:'contact',mut:'medium',escape:0.2,asymp:5,vax:'none',severity:10,category:'Influenza',tags:['R0: 0.8','CFR: 53%','Contact']},
+  {id:'ebola',name:'Ebola (Zaire)',r0:2.0,incub:9,infect:21,cfr:67.0,hosp:80,mode:'contact',mut:'low',escape:0.05,asymp:2,vax:'delay',severity:10,category:'Filovirus',tags:['R0: 2.0','CFR: 67%','Contact']},
+  {id:'marburg',name:'Marburg Virus',r0:1.8,incub:7,infect:20,cfr:88.0,hosp:90,mode:'contact',mut:'low',escape:0.05,asymp:1,vax:'none',severity:10,category:'Filovirus',tags:['R0: 1.8','CFR: 88%','Contact']},
+  {id:'measles',name:'Measles',r0:15.0,incub:12,infect:8,cfr:0.2,hosp:5,mode:'airborne',mut:'low',escape:0.05,asymp:5,vax:'yes',severity:5,category:'Paramyxovirus',tags:['R0: 15','CFR: 0.2%','Airborne']},
+  {id:'smallpox',name:'Smallpox',r0:6.0,incub:12,infect:17,cfr:30.0,hosp:80,mode:'airborne',mut:'low',escape:0.1,asymp:0,vax:'yes',severity:10,category:'Orthopoxvirus',tags:['R0: 6.0','CFR: 30%','Airborne']},
+  {id:'tb',name:'Tuberculosis',r0:2.0,incub:56,infect:365,cfr:15.0,hosp:20,mode:'airborne',mut:'medium',escape:0.3,asymp:70,vax:'yes',severity:6,category:'Mycobacterium',tags:['R0: 2.0','CFR: 15%','Airborne']},
+  {id:'nipah',name:'Nipah Virus',r0:0.5,incub:7,infect:14,cfr:70.0,hosp:85,mode:'contact',mut:'low',escape:0.05,asymp:5,vax:'none',severity:10,category:'Paramyxovirus',tags:['R0: 0.5','CFR: 70%','Contact']},
+  {id:'norovirus',name:'Norovirus',r0:3.5,incub:1.5,infect:3,cfr:0.001,hosp:0.2,mode:'contact',mut:'high',escape:0.6,asymp:30,vax:'none',severity:2,category:'Calicivirus',tags:['R0: 3.5','CFR: <0.1%','Contact']},
+  {id:'cholera',name:'Cholera',r0:2.0,incub:2,infect:5,cfr:25.0,hosp:40,mode:'contact',mut:'low',escape:0.1,asymp:75,vax:'yes',severity:7,category:'Vibrio',tags:['R0: 2.0','CFR: 25%','Contact']},
+  {id:'zika',name:'Zika Virus',r0:3.0,incub:8,infect:10,cfr:0.04,hosp:1,mode:'vector',mut:'low',escape:0.1,asymp:80,vax:'none',severity:3,category:'Flavivirus',tags:['R0: 3.0','CFR: 0.04%','Vector']},
+  {id:'dengue',name:'Dengue Fever',r0:3.5,incub:7,infect:10,cfr:2.5,hosp:15,mode:'vector',mut:'low',escape:0.3,asymp:75,vax:'yes',severity:6,category:'Flavivirus',tags:['R0: 3.5','CFR: 2.5%','Vector']},
+  {id:'monkeypox',name:'Mpox (Monkeypox)',r0:2.0,incub:12,infect:21,cfr:3.6,hosp:15,mode:'contact',mut:'low',escape:0.2,asymp:10,vax:'yes',severity:6,category:'Orthopoxvirus',tags:['R0: 2.0','CFR: 3.6%','Contact']}
+];
+
+let selectedVirus=VIRUSES[0], selectedNation='gb', simResults=null, savedScenarios=[], scenariosChart=null, charts={};
+
+function nav(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>{if(n.getAttribute('onclick').includes("'"+page+"'"))n.classList.add('active')});
+}
+
+function switchTab(el,show){
+  el.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('virus-library').style.display=show==='virus-library'?'':'none';
+  document.getElementById('virus-custom').style.display=show==='virus-custom'?'':'none';
+}
+
+function buildPresets(){
+  document.getElementById('preset-grid').innerHTML=Object.entries(NATIONS).map(([k,v])=>
+    `<div class="preset-btn ${k===selectedNation?'active':''}" onclick="applyPreset('${k}')" id="preset-${k}"><span class="preset-flag">${v.flag}</span>${v.name}</div>`
+  ).join('');
+}
+
+function applyPreset(key){
+  selectedNation=key;
+  document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('preset-'+key).classList.add('active');
+  const n=NATIONS[key];
+  document.getElementById('n-pop').value=n.pop;
+  document.getElementById('n-density').value=n.density;
+  document.getElementById('n-household').value=n.household;
+  document.getElementById('n-urban').value=n.urban;
+  document.getElementById('n-urban-val').textContent=n.urban+'%';
+  document.getElementById('n-mobility').value=n.mobility;
+  document.getElementById('n-beds').value=n.beds;
+  document.getElementById('n-icu').value=n.icu;
+  document.getElementById('n-staff').value=n.staff;
+  document.getElementById('n-econ').value=n.econ;
+  document.getElementById('n-econ-val').textContent=n.econ;
+  Object.keys(n.ages).forEach(k=>{const el=document.getElementById('age-'+k);if(el)el.value=n.ages[k];});
+}
+
+function buildAgeInputs(){
+  const groups=[{id:'u14',label:'0–14 yrs'},{id:'a1529',label:'15–29 yrs'},{id:'a3044',label:'30–44 yrs'},{id:'a4559',label:'45–59 yrs'},{id:'a6074',label:'60–74 yrs'},{id:'o75',label:'75+ yrs'}];
+  const n=NATIONS[selectedNation];
+  document.getElementById('age-inputs').innerHTML=groups.map(g=>`<div><label>${g.label}</label><input type="number" id="age-${g.id}" value="${n.ages[g.id]}" min="0" max="100"></div>`).join('');
+}
+
+function buildVirusGrid(){
+  document.getElementById('virus-grid').innerHTML=VIRUSES.map(v=>
+    `<div class="virus-card ${v.id===selectedVirus.id?'active':''}" onclick="selectVirus('${v.id}')" id="vc-${v.id}">
+      <div class="virus-name">${v.name}</div>
+      <div class="virus-tags"><span class="tag tag-r0">${v.tags[0]}</span><span class="tag tag-cfr">${v.tags[1]}</span><span class="tag tag-mode">${v.tags[2]}</span></div>
+    </div>`
+  ).join('');
+  showVirusDetail(selectedVirus);
+}
+
+function selectVirus(id){
+  selectedVirus=VIRUSES.find(v=>v.id===id);
+  document.querySelectorAll('.virus-card').forEach(c=>c.classList.remove('active'));
+  document.getElementById('vc-'+id).classList.add('active');
+  showVirusDetail(selectedVirus);
+}
+
+function showVirusDetail(v){
+  const sc=v.severity>=8?'var(--red)':v.severity>=5?'var(--amber)':'var(--green)';
+  document.getElementById('virus-detail-panel').innerHTML=`
+    <div class="virus-detail">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <strong style="font-size:15px">${v.name}</strong>
+        <span style="font-size:12px;font-family:var(--font-mono);color:${sc}">Severity ${v.severity}/10</span>
+      </div>
+      <div class="detail-grid">
+        <div class="detail-item"><div class="d-label">R0</div><div class="d-val">${v.r0}</div></div>
+        <div class="detail-item"><div class="d-label">Incubation</div><div class="d-val">${v.incub}d</div></div>
+        <div class="detail-item"><div class="d-label">Infectious</div><div class="d-val">${v.infect}d</div></div>
+        <div class="detail-item"><div class="d-label">CFR</div><div class="d-val" style="color:${v.cfr>10?'var(--red)':v.cfr>1?'var(--amber)':'var(--green)'}">${v.cfr}%</div></div>
+        <div class="detail-item"><div class="d-label">Hosp. Rate</div><div class="d-val">${v.hosp}%</div></div>
+        <div class="detail-item"><div class="d-label">Asymptomatic</div><div class="d-val">${v.asymp}%</div></div>
+        <div class="detail-item"><div class="d-label">Transmission</div><div class="d-val" style="font-size:13px">${v.mode}</div></div>
+        <div class="detail-item"><div class="d-label">Immune Escape</div><div class="d-val">${Math.round(v.escape*100)}%</div></div>
+        <div class="detail-item"><div class="d-label">Mutation Risk</div><div class="d-val" style="font-size:13px">${v.mut}</div></div>
+      </div>
+    </div>`;
+}
+
+function matchCustomVirus(){
+  const r0=parseFloat(document.getElementById('cv-r0').value);
+  const cfr=parseFloat(document.getElementById('cv-cfr').value);
+  const mode=document.getElementById('cv-mode').value;
+  const incub=parseFloat(document.getElementById('cv-incub').value);
+  let best=null,bestScore=Infinity;
+  VIRUSES.forEach(v=>{
+    const score=Math.abs(v.r0-r0)*2+Math.abs(v.cfr-cfr)*0.5+(v.mode===mode?0:3)+Math.abs(v.incub-incub)*0.3;
+    if(score<bestScore){bestScore=score;best=v;}
+  });
+  document.getElementById('matching-result').innerHTML=`
+    <div class="matching-box"><div class="matching-title">Match Result</div>
+    <div style="font-size:13px">Closest: <strong>${best.name}</strong> (${Math.round(100-Math.min(bestScore*5,95))}% similarity)</div></div>`;
+  selectedVirus={id:'custom',name:document.getElementById('cv-name').value||'Novel Pathogen X',
+    r0,cfr,hosp:parseFloat(document.getElementById('cv-hosp').value),
+    incub,infect:parseFloat(document.getElementById('cv-infect').value),
+    asymp:parseFloat(document.getElementById('cv-asymp').value),escape:parseFloat(document.getElementById('cv-escape').value),
+    mode,mut:'medium',severity:5,category:'Custom',vax:'none',tags:[`R0: ${r0}`,`CFR: ${cfr}%`,mode]};
+}
+
+function getNation(){
+  return{pop:parseInt(document.getElementById('n-pop').value)||67000000,
+    density:parseFloat(document.getElementById('n-density').value)||270,
+    household:parseFloat(document.getElementById('n-household').value)||2.4,
+    urban:parseInt(document.getElementById('n-urban').value)||83,
+    mobility:document.getElementById('n-mobility').value,
+    beds:parseFloat(document.getElementById('n-beds').value)||2.5,
+    icu:parseFloat(document.getElementById('n-icu').value)||0.35,
+    staff:document.getElementById('n-staff').value,
+    econ:parseInt(document.getElementById('n-econ').value)||65};
+}
+
+/*
+ * FIXED SEIRD MODEL
+ * Key fixes:
+ * 1. Deaths accumulated from gamma*I*cfr_rate each day (proper flow out of I compartment)
+ * 2. Recovered = gamma*I*(1-cfr_rate) — complementary to deaths
+ * 3. Hospitalisation = fraction of currently infectious needing hospital care
+ * 4. totalInfected = cumulative new infections tracked separately (not R+D at end)
+ * 5. Vaccine removes from S, doesn't add to R (separate Vax compartment)
+ */
+function runSEIRD(N, effR0, sigma, gamma, cfrRate, hospRate, days, intvDay, comply, vaxStart, mutate){
+  // State
+  let S=N-10, E=5, I=5, R=0, D=0, V=0;
+  let cumInfected=10; // seed
+
+  const res={I:[],E:[],R:[],D:[],H:[],newI:[]};
+
+  const betaBase=effR0*gamma; // beta = R0 * gamma
+  let vaxDailyRate=0;
+
+  for(let d=0;d<days;d++){
+    let beta=betaBase;
+    // Intervention reduces beta
+    if(d>=intvDay) beta*=(1-(comply/100)*0.70);
+    // Mutation bump
+    if(mutate && d>90 && Math.random()<0.0008) beta*=1.12;
+    // Vaccine: ramp up once started
+    if(vaxStart>0 && d>=vaxStart) vaxDailyRate=Math.min(vaxDailyRate+0.0015, 0.006);
+
+    // Force of infection
+    const foi=beta*(I/N);
+
+    // Flows (Euler integration)
+    const newExposed   = foi*S;
+    const newInfected  = sigma*E;          // E → I
+    const newRecovered = gamma*I*(1-cfrRate);  // I → R (survived)
+    const newDeaths    = gamma*I*cfrRate;      // I → D (died)
+    const newVax       = vaxDailyRate*S;       // S → V (vaccinated, immune)
+
+    S = Math.max(0, S - newExposed - newVax);
+    E = Math.max(0, E + newExposed - newInfected);
+    I = Math.max(0, I + newInfected - newRecovered - newDeaths);
+    R = R + newRecovered;
+    D = D + newDeaths;
+    V = V + newVax;
+
+    cumInfected += newInfected;
+
+    // Hospitalisations: fraction of active I needing hospital (not all at once)
+    const H = I * (hospRate/100) * 0.25; // ~25% of hosp-rate cases are inpatient at any moment
+
+    res.I.push(Math.round(I));
+    res.E.push(Math.round(E));
+    res.R.push(Math.round(R));
+    res.D.push(Math.round(D));
+    res.H.push(Math.round(H));
+    res.newI.push(Math.round(newInfected));
+  }
+  res.cumInfected=Math.round(cumInfected);
+  return res;
+}
+
+async function runSimulation(){
+  const nd=getNation();
+  const v=selectedVirus;
+  const days=parseInt(document.getElementById('sim-days').value);
+  const intvDay=parseInt(document.getElementById('sim-intv').value);
+  const comply=parseInt(document.getElementById('sim-comply').value);
+  const mutate=document.getElementById('sim-mutation').checked;
+  const vaxSel=document.getElementById('sim-vax').value;
+  const vaxStart=vaxSel==='slow'?180:vaxSel==='fast'?90:vaxSel==='vfast'?60:0;
+
+  const pw=document.getElementById('sim-progress-wrap');
+  const pb=document.getElementById('sim-progress');
+  const pl=document.getElementById('sim-progress-label');
+  pw.style.display='block'; pb.style.width='0%';
+
+  const steps=['Seeding infection compartments...','Applying demographic modifiers...','Running SEIRD daily integration...','Calculating healthcare load...','Finalising projections...'];
+  for(let i=0;i<=4;i++){
+    pb.style.width=(i*25)+'%';
+    pl.textContent=steps[i]||'Done';
+    await new Promise(r=>setTimeout(r,60));
+  }
+
+  // Effective R0 adjusted for mobility, density, urban spread
+  const mobMult={low:0.7,medium:1.0,high:1.3}[nd.mobility]||1.0;
+  const densityMult=0.85+Math.min(nd.density,800)/2000;
+  const effR0=v.r0*mobMult*densityMult;
+
+  const sigma=1/v.incub;   // rate out of E
+  const gamma=1/v.infect;  // rate out of I
+  const cfrRate=v.cfr/100; // fraction of I that die
+
+  const data=runSEIRD(nd.pop, effR0, sigma, gamma, cfrRate, v.hosp, days, intvDay, comply, vaxStart, mutate);
+  pb.style.width='100%'; await new Promise(r=>setTimeout(r,100));
+
+  const peakI=Math.max(...data.I);
+  const peakDay=data.I.indexOf(peakI)+1;
+  const totalInfected=data.cumInfected;
+  const totalDeaths=data.D[days-1];
+  const totalRecovered=data.R[days-1];
+  const hospCap=Math.floor(nd.pop*nd.beds/1000);
+  const icuCap=Math.floor(nd.pop*nd.icu/1000);
+  const peakHosp=Math.max(...data.H);
+  const hospBreachDay=data.H.findIndex(h=>h>hospCap);
+
+  simResults={data,peakI,peakDay,totalInfected,totalDeaths,totalRecovered,hospCap,icuCap,peakHosp,hospBreachDay,nd,v,days,intvDay,comply,effR0,vaxStart};
+
+  pw.style.display='none';
+  renderResults();
+  generatePolicy();
+  nav('results');
+}
+
+function fmt(n){
+  n=Math.round(n);
+  if(n>=1e9)return(n/1e9).toFixed(2)+'B';
+  if(n>=1e6)return(n/1e6).toFixed(2)+'M';
+  if(n>=1e3)return(n/1e3).toFixed(1)+'K';
+  return n.toLocaleString();
+}
+
+function pct(n,total){return((n/total)*100).toFixed(1)+'%'}
+
+function renderResults(){
+  if(!simResults)return;
+  const r=simResults;
+  const hospOk=r.peakHosp<r.hospCap;
+  const deathPct=pct(r.totalDeaths,r.nd.pop);
+  const infectPct=pct(r.totalInfected,r.nd.pop);
+
+  const html=`
+    <div class="grid4" style="margin-bottom:16px">
+      <div class="metric-card"><div class="metric-label">Total Infected (cumulative)</div><div class="metric-value">${fmt(r.totalInfected)}</div><div class="metric-sub">${infectPct} of population</div></div>
+      <div class="metric-card metric-danger"><div class="metric-label">Projected Deaths</div><div class="metric-value">${fmt(r.totalDeaths)}</div><div class="metric-sub">${deathPct} of population · CFR ${r.v.cfr}%</div></div>
+      <div class="metric-card ${hospOk?'metric-ok':'metric-danger'}"><div class="metric-label">Peak Hospital Demand</div><div class="metric-value">${fmt(r.peakHosp)}</div><div class="metric-sub">Capacity: ${fmt(r.hospCap)} · ${hospOk?'Within limit':'BREACHED'}</div></div>
+      <div class="metric-card metric-warn"><div class="metric-label">Peak Infectious Day</div><div class="metric-value">Day ${r.peakDay}</div><div class="metric-sub">Effective R0: ${r.effR0.toFixed(2)}</div></div>
+    </div>
+    ${r.hospBreachDay>0?`<div class="alert-danger" style="background:rgba(220,38,38,.08);border:0.5px solid rgba(220,38,38,.3);border-radius:8px;padding:12px 16px;font-size:13px;margin-bottom:12px">&#9888; Hospital capacity breached at day ${r.hospBreachDay}. Surge protocols required immediately.</div>`:`<div class="alert-info" style="background:rgba(13,148,136,.08);border:0.5px solid rgba(13,148,136,.3);border-radius:8px;padding:12px 16px;font-size:13px;margin-bottom:12px">&#9432; Hospital capacity maintained within limits under current intervention scenario.</div>`}
+    <div class="section">
+      <div class="section-title">Active infections, exposed &amp; recovered</div>
+      <div style="display:flex;gap:16px;margin-bottom:12px;font-size:12px;font-family:var(--font-mono);color:var(--text3)">
+        <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#dc2626;margin-right:4px"></span>Infectious</span>
+        <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#d97706;margin-right:4px"></span>Exposed</span>
+        <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#059669;margin-right:4px"></span>Recovered</span>
+      </div>
+      <div class="chart-wrap tall"><canvas id="chart-main" role="img" aria-label="Active infectious, exposed and recovered populations over time">SEIRD curve data.</canvas></div>
+    </div>
+    <div class="grid2">
+      <div class="section">
+        <div class="section-title">Hospital demand vs capacity</div>
+        <div style="display:flex;gap:16px;margin-bottom:8px;font-size:12px;font-family:var(--font-mono);color:var(--text3)">
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#1d4ed8;margin-right:4px"></span>Demand</span>
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#dc2626;margin-right:4px;opacity:.6"></span>Capacity limit</span>
+        </div>
+        <div class="chart-wrap"><canvas id="chart-hosp" role="img" aria-label="Hospital demand vs capacity">Hospitalisation data.</canvas></div>
+      </div>
+      <div class="section">
+        <div class="section-title">Cumulative deaths</div>
+        <div class="chart-wrap"><canvas id="chart-deaths" role="img" aria-label="Cumulative deaths over simulation period">Death toll data.</canvas></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Projections by period</div>
+      <table class="data-table"><thead><tr><th>Day</th><th>Active Cases</th><th>Hosp. Demand</th><th>Deaths (cum.)</th><th>Recovered (cum.)</th><th>Status</th></tr></thead>
+      <tbody>${[1,15,30,60,90,120,180,240,300,364].filter(d=>d<=r.days).map(d=>{
+        const i=d-1;
+        return`<tr>
+          <td style="font-family:var(--font-mono)">Day ${d}</td>
+          <td>${fmt(r.data.I[i]||0)}</td>
+          <td>${fmt(r.data.H[i]||0)}</td>
+          <td>${fmt(r.data.D[i]||0)}</td>
+          <td>${fmt(r.data.R[i]||0)}</td>
+          <td>${(r.data.H[i]||0)>r.hospCap?'<span class="badge badge-danger">Overloaded</span>':'<span class="badge badge-ok">Within capacity</span>'}</td>
+        </tr>`;}).join('')}
+      </tbody></table>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:4px">
+      <button class="btn btn-secondary" onclick="saveScenario()">Save Scenario</button>
+      <button class="btn btn-primary" onclick="nav('policy')">View Policy Recommendations &#8594;</button>
+    </div>`;
+
+  document.getElementById('results-content').innerHTML=html;
+
+  setTimeout(()=>{
+    const skip=Math.max(1,Math.floor(r.days/60));
+    const lbl=Array.from({length:r.days},(_,i)=>`D${i+1}`).filter((_,i)=>i%skip===0);
+    const sI=r.data.I.filter((_,i)=>i%skip===0);
+    const sE=r.data.E.filter((_,i)=>i%skip===0);
+    const sR=r.data.R.filter((_,i)=>i%skip===0);
+    const sH=r.data.H.filter((_,i)=>i%skip===0);
+    const sD=r.data.D.filter((_,i)=>i%skip===0);
+    const capLine=new Array(lbl.length).fill(r.hospCap);
+
+    if(charts.main)charts.main.destroy();
+    charts.main=new Chart(document.getElementById('chart-main'),{type:'line',data:{labels:lbl,datasets:[
+      {label:'Infectious',data:sI,borderColor:'#dc2626',backgroundColor:'rgba(220,38,38,.1)',fill:true,tension:.4,pointRadius:0,borderWidth:2},
+      {label:'Exposed',data:sE,borderColor:'#d97706',backgroundColor:'rgba(217,119,6,.07)',fill:true,tension:.4,pointRadius:0,borderWidth:1.5,borderDash:[4,3]},
+      {label:'Recovered',data:sR,borderColor:'#059669',backgroundColor:'rgba(5,150,105,.06)',fill:true,tension:.4,pointRadius:0,borderWidth:1.5}
+    ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>fmt(v)},grid:{color:'rgba(100,116,139,.1)'}},x:{ticks:{maxTicksLimit:12}}}}});
+
+    if(charts.hosp)charts.hosp.destroy();
+    charts.hosp=new Chart(document.getElementById('chart-hosp'),{type:'line',data:{labels:lbl,datasets:[
+      {label:'Demand',data:sH,borderColor:'#1d4ed8',backgroundColor:'rgba(29,78,216,.1)',fill:true,tension:.4,pointRadius:0,borderWidth:2},
+      {label:'Capacity',data:capLine,borderColor:'#dc2626',backgroundColor:'transparent',borderDash:[6,3],pointRadius:0,borderWidth:1.5}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>fmt(v)}},x:{ticks:{maxTicksLimit:8}}}}});
+
+    if(charts.deaths)charts.deaths.destroy();
+    charts.deaths=new Chart(document.getElementById('chart-deaths'),{type:'line',data:{labels:lbl,datasets:[
+      {label:'Deaths',data:sD,borderColor:'#7f1d1d',backgroundColor:'rgba(127,29,29,.15)',fill:true,tension:.4,pointRadius:0,borderWidth:2}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>fmt(v)}},x:{ticks:{maxTicksLimit:8}}}}});
+  },100);
+}
+
+function generatePolicy(){
+  if(!simResults)return;
+  const r=simResults; const v=r.v; const nd=r.nd;
+  const policies=[];
+  const add=(priority,type,text)=>policies.push({priority,type,text});
+
+  if(v.r0>=8)add('high','Immediate Lockdown',`R0 of ${v.r0} is extremely high. Immediate nationwide lockdown is the only suppression option. Every day of delay exponentially increases peak infections.`);
+  else if(v.r0>=4)add('high','Aggressive Restrictions',`R0 of ${v.r0} requires mandatory gathering bans, workplace closures, and school shutdowns to bring Re below 1.`);
+  else add('medium','Targeted Measures',`R0 of ${v.r0.toFixed(1)} is manageable with targeted NPIs: capacity limits, distancing requirements, and test-trace-isolate.`);
+
+  if(v.mode==='airborne')add('high','Mandatory Masking','Airborne transmission confirmed. N95/FFP2 respirators mandatory in all indoor public spaces. HEPA filtration required in high-risk venues.');
+  else if(v.mode==='droplet')add('medium','Mask Advisory','Surgical masks recommended in crowded indoor settings. Ventilation improvements recommended.');
+  else if(v.mode==='contact')add('medium','Hygiene Protocols','Enhanced hand hygiene, PPE for healthcare workers, and surface decontamination protocols. Restrict physical contact.');
+
+  if(v.cfr>=20)add('high','Extreme Vulnerability Shielding',`CFR of ${v.cfr}% is catastrophic. Immediate mandatory shielding for all 60+, immunocompromised, and co-morbid individuals. Prioritise their separation from the general population.`);
+  else if(v.cfr>=5)add('high','High-Risk Group Protection',`CFR of ${v.cfr}% requires priority isolation support and healthcare access for vulnerable groups. Cohorting in care homes essential.`);
+  else if(v.cfr>=1)add('medium','Vulnerable Population Monitoring',`CFR of ${v.cfr}% — implement priority triage for 65+ and those with underlying conditions.`);
+
+  if(r.hospBreachDay>0)add('high','Emergency Surge Capacity',`Projections show hospital capacity breached at Day ${r.hospBreachDay}. Activate Nightingale-style emergency facilities. Halt elective procedures. Consider military medical assets.`);
+  if(nd.beds<1.5)add('high','Critical Baseline Capacity',`Nation has only ${nd.beds} hospital beds per 1,000 population. This is critically low. International medical assistance and field hospitals required before peak.`);
+
+  if(v.r0>3||nd.mobility==='high')add('high','Border Controls','Immediate travel restrictions. Mandatory pre-departure testing, hotel quarantine for arrivals from affected regions. Land border checkpoints.');
+  if(r.intvDay>60)add('medium','Early Warning Systems','Intervention was modelled late. Establish genomic surveillance networks, wastewater epidemiology, and sentinel GP reporting for earlier detection in future outbreaks.');
+
+  if(nd.econ<40)add('medium','Economic Emergency Support',`Low economic resilience (${nd.econ}/100). Restrictions risk famine and social breakdown. International aid, income support schemes, and food distribution required immediately.`);
+  else add('low','Business Continuity Planning','Establish clear tiered restriction framework with sector-specific protocols to minimise economic disruption while maintaining suppression.');
+
+  if(!v.vax||v.vax==='none')add('medium','Emergency Vaccine Development','No licensed vaccine. Activate platform vaccine development (mRNA/adenoviral vector). Engage WHO and international pharmaceutical partners for accelerated trials.');
+  else if(v.vax==='delay')add('low','Vaccine Procurement','Vaccine available post-12 months. Secure advance purchase agreements. Pre-position distribution cold chain. Prioritise order: healthcare workers → 65+ → essential workers → general public.');
+  else add('low','Vaccination Campaign','Vaccine available. Prioritise: healthcare workers, 60+, co-morbid individuals. Target 70%+ coverage. Deploy mobile vaccination units. Address vaccine hesitancy with trusted community messengers.');
+
+  add('low','Public Communication','Establish single national public health authority as sole communication channel. Weekly data releases. Counter-disinformation unit. Multilingual outreach.');
+  add('low','International Coordination','Notify WHO under IHR 2005. Share genomic sequences. Engage regional bodies. Coordinate border policies with neighbours.');
+
+  policies.sort((a,b)=>(['high','medium','low'].indexOf(a.priority)-['high','medium','low'].indexOf(b.priority)));
+
+  const html=`
+    <div class="section">
+      <div class="section-title">Threat Assessment</div>
+      <div class="grid3">
+        <div class="metric-card"><div class="metric-label">Pathogen</div><div class="metric-value" style="font-size:16px">${r.v.name}</div><div class="metric-sub">Severity ${r.v.severity}/10</div></div>
+        <div class="metric-card"><div class="metric-label">Nation</div><div class="metric-value" style="font-size:16px">${NATIONS[selectedNation]?.name||'Custom'}</div><div class="metric-sub">Econ resilience ${nd.econ}/100</div></div>
+        <div class="metric-card ${r.peakHosp>r.hospCap?'metric-danger':'metric-ok'}"><div class="metric-label">Healthcare Status</div><div class="metric-value" style="font-size:16px">${r.peakHosp>r.hospCap?'Critical':'Manageable'}</div><div class="metric-sub">Peak ${fmt(r.peakHosp)} vs ${fmt(r.hospCap)} capacity</div></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Recommended Actions — ${policies.length} measures</div>
+      ${policies.map(p=>`<div class="policy-item"><div class="policy-priority ${p.priority}">${p.priority.toUpperCase()} PRIORITY — ${p.type}</div><div class="policy-text">${p.text}</div></div>`).join('')}
+    </div>`;
+  document.getElementById('policy-content').innerHTML=html;
+}
+
+function saveScenario(){
+  if(!simResults)return;
+  const r=simResults;
+  const name=`${r.v.name} / ${NATIONS[selectedNation]?.name||'Custom'} / Intv Day ${r.intvDay} / ${r.comply}% compliance`;
+  savedScenarios.push({name,data:r.data,days:r.days,totalInfected:r.totalInfected,totalDeaths:r.totalDeaths,peakDay:r.peakDay,peakI:r.peakI});
+  renderScenarios();
+  nav('scenarios');
+}
+
+function renderScenarios(){
+  const COLORS=['#0d9488','#dc2626','#1d4ed8','#d97706','#7c3aed','#059669'];
+  if(savedScenarios.length===0){
+    document.getElementById('scenarios-content').innerHTML='<div class="alert-info" style="background:rgba(13,148,136,.08);border:0.5px solid rgba(13,148,136,.3);border-radius:8px;padding:12px 16px;font-size:13px">No saved scenarios yet.</div>';
+    document.getElementById('scenarios-chart-wrap').style.display='none';
+    return;
+  }
+  document.getElementById('scenarios-content').innerHTML=`
+    <div class="section"><div class="section-title">Saved runs</div>
+    <table class="data-table"><thead><tr><th>Scenario</th><th>Total Infected</th><th>Deaths</th><th>Peak Day</th><th>Peak Cases</th></tr></thead>
+    <tbody>${savedScenarios.map((s,i)=>`<tr>
+      <td><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${COLORS[i%COLORS.length]};margin-right:8px"></span>${s.name}</td>
+      <td>${fmt(s.totalInfected)}</td><td>${fmt(s.totalDeaths)}</td><td>Day ${s.peakDay}</td><td>${fmt(s.peakI)}</td>
+    </tr>`).join('')}</tbody></table></div>`;
+  document.getElementById('scenarios-chart-wrap').style.display='block';
+  setTimeout(()=>{
+    const maxDays=Math.max(...savedScenarios.map(s=>s.days));
+    const skip=Math.max(1,Math.floor(maxDays/60));
+    const lbl=Array.from({length:maxDays},(_,i)=>`D${i+1}`).filter((_,i)=>i%skip===0);
+    if(scenariosChart)scenariosChart.destroy();
+    scenariosChart=new Chart(document.getElementById('scenarios-chart'),{type:'line',
+      data:{labels:lbl,datasets:savedScenarios.map((s,i)=>({label:s.name,data:s.data.I.filter((_,j)=>j%skip===0),borderColor:COLORS[i%COLORS.length],backgroundColor:'transparent',tension:.4,pointRadius:0,borderWidth:2}))},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{font:{size:11},boxWidth:10}}},scales:{y:{ticks:{callback:v=>fmt(v)}},x:{ticks:{maxTicksLimit:12}}}}});
+  },100);
+}
+
+buildPresets(); buildAgeInputs(); buildVirusGrid();
+</script>
